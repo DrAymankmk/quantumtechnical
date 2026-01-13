@@ -3234,7 +3234,7 @@ input.main-search-input::placeholder {
 .service__item.active h4 a {
   color: var(--white);
 }
-.service__item.active p {
+.service__item.active p, .service__item.active ul li{
   color: var(--white);
   opacity: 90%;
 }
