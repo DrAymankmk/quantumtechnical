@@ -58,7 +58,7 @@
                                 fill="white" />
                         </svg>
 
-                        <a href="#0" class="ms-1">info@example.com</a>
+		<a href="mailto:info@quantum-technical.com" class="ms-1">info@quantum-technical.com</a>
                     </li>
                     <li class="ms-4"><svg width="16" height="15" viewBox="0 0 16 15" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -244,7 +244,8 @@
             <li class="py-2"><i class="fa-solid primary-color fa-phone-volume"></i> <a
                     href="tel:+208-6666-0112">+208-6666-0112</a>
             </li>
-            <li><i class="fa-solid primary-color fa-paper-plane"></i> <a href="#0">info@example.com</a></li>
+	<li><i class="fa-solid primary-color fa-paper-plane"></i> <a
+			href="mailto:info@quantum-technical.com">info@quantum-technical.com</a></li>
         </ul>
         <div class="social-icon mt-20">
             <a href="#0"><i class="fa-brands fa-facebook-f"></i></a>
@@ -338,7 +339,7 @@
                                     </i>
                                     <div>
                                         <span class="text-white">Make a Quote</span>
-                                        <h3 class="mt-1"><a class="text-white" href="#0">info@gmail.com</a>
+				<h3 class="mt-1"><a class="text-white" href="mailto:info@quantum-technical.com">info@quantum-technical.com</a>
                                         </h3>
                                     </div>
                                 </li>
@@ -388,29 +389,27 @@
                                     in auctor ultrices,</p>
                             </div>
                             <div class="contact__form">
-                                <form action="#">
+			<form id="contact-form">
                                     <div class="row">
                                         <div class="col-6">
                                             <label for="name">Your Name*</label>
-                                            <input id="name" class="bg-transparent bor" type="text"
-                                                placeholder="Your Name">
+				<input id="name" name="name" class="bg-transparent bor" type="text" placeholder="Your Name" required>
                                         </div>
                                         <div class="col-6">
                                             <label for="email">Your Email*</label>
-                                            <input class="bg-transparent bor" id="email" type="email"
-                                                placeholder="Your Email">
+				<input class="bg-transparent bor" id="email" name="email" type="email" placeholder="Your Email" required>
                                         </div>
                                     </div>
                                     <div class="text-area">
                                         <label for="massage">Write Message*</label>
-                                        <textarea class="bg-transparent bor" id="massage"
-                                            placeholder="Write Message"></textarea>
+				<textarea class="bg-transparent bor" id="massage" name="message" placeholder="Write Message" required></textarea>
                                     </div>
+			<div id="form-message" style="display: none; padding: 15px; margin-bottom: 20px; border-radius: 5px;"></div>
                                     <div class="btn-two">
                                         <span class="btn-circle">
                                         </span>
-                                        <a href="#" class="btn-one">Send Message <i
-                                                class="fa-regular fa-arrow-right-long"></i></a>
+				<button type="submit" class="btn-one" id="submit-btn">Send Message <i
+						class="fa-regular fa-arrow-right-long"></i></button>
                                     </div>
                                 </form>
                             </div>
@@ -568,6 +567,55 @@
     <script src="assets/js/jquery.waypoints.js"></script>
     <!-- Script Js -->
     <script src="assets/js/script.js"></script>
+<!-- Contact Form Script -->
+<script>
+	document.getElementById('contact-form').addEventListener('submit', function (event) {
+		event.preventDefault();
+
+		const submitBtn = document.getElementById('submit-btn');
+		const formMessage = document.getElementById('form-message');
+		const originalBtnText = submitBtn.innerHTML;
+
+		// Disable button and show loading
+		submitBtn.disabled = true;
+		submitBtn.innerHTML = 'Sending... <i class="fa-solid fa-spinner fa-spin"></i>';
+		formMessage.style.display = 'none';
+
+		// Get form data
+		const formData = new FormData(this);
+
+		// Send form data to PHP script
+		fetch('send-email.php', {
+			method: 'POST',
+			body: formData
+		})
+			.then(response => response.json())
+			.then(data => {
+				formMessage.style.display = 'block';
+				if (data.success) {
+					formMessage.style.backgroundColor = '#4CAF50';
+					formMessage.style.color = '#fff';
+					formMessage.textContent = data.message;
+					document.getElementById('contact-form').reset();
+				} else {
+					formMessage.style.backgroundColor = '#f44336';
+					formMessage.style.color = '#fff';
+					formMessage.textContent = data.message;
+				}
+				submitBtn.innerHTML = originalBtnText;
+				submitBtn.disabled = false;
+			})
+			.catch(error => {
+				formMessage.style.display = 'block';
+				formMessage.style.backgroundColor = '#f44336';
+				formMessage.style.color = '#fff';
+				formMessage.textContent = 'Failed to send message. Please try again or contact us directly at info@quantum-technical.com';
+				submitBtn.innerHTML = originalBtnText;
+				submitBtn.disabled = false;
+				console.error('Error:', error);
+			});
+	});
+</script>
 </body>
 
 </html>
