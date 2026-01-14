@@ -1,27 +1,27 @@
 # Disable directory listing
 Options -Indexes
 
+# Disable MultiViews (can cause redirect issues)
+Options -MultiViews
+
 # Enable rewrite
 RewriteEngine On
 
 # Set correct base
 RewriteBase /
 
-# Homepage
+# Homepage - only for root directory
 DirectoryIndex index.html
 
 # ❌ DO NOT redirect all pages to /
 # ❌ DO NOT use SPA fallback rules
 
-# Allow direct access to HTML files
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} \.html$ [NC]
+# FIRST: If file exists, serve it directly - STOP ALL PROCESSING
+RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
-# Prevent redirecting existing HTML files
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteCond %{REQUEST_URI} \.html$ [NC]
+# SECOND: If directory exists, serve it directly - STOP ALL PROCESSING  
+RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
 # Prevent filesystem path exposure
