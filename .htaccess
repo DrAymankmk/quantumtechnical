@@ -1,0 +1,37 @@
+# Disable directory listing
+Options -Indexes
+
+# Enable rewrite
+RewriteEngine On
+
+# Set correct base
+RewriteBase /
+
+# Homepage
+DirectoryIndex index.html
+
+# ❌ DO NOT redirect all pages to /
+# ❌ DO NOT use SPA fallback rules
+
+# Allow direct access to HTML files
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} \.html$ [NC]
+RewriteRule ^ - [L]
+
+# Prevent redirecting existing HTML files
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} \.html$ [NC]
+RewriteRule ^ - [L]
+
+# Prevent filesystem path exposure
+RewriteCond %{REQUEST_URI} ^/home/
+RewriteRule .* - [R=404,L]
+
+# Disable caching (for testing)
+<IfModule mod_headers.c>
+Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+Header set Pragma "no-cache"
+Header set Expires "0"
+</IfModule>
+
